@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Catch.Objects.Drawables
 
         protected override JudgementResult CreateResult(Judgement judgement) => new CatchJudgementResult(HitObject, judgement);
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void CheckForResult(bool userTriggered, double timeOffset, Action<Action<JudgementResult>> onAction)
         {
             if (CheckPosition == null) return;
 

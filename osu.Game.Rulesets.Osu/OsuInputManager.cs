@@ -113,5 +113,11 @@ namespace osu.Game.Rulesets.Osu
 
         [Description("Smoke")]
         Smoke,
+
+        [Description("Unscored Left button")]
+        UnscoredLeftButton,
+
+        [Description("Unscored Right button")]
+        UnscoredRightButton
     }
 }

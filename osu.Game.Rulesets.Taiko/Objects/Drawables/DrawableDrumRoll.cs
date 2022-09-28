@@ -135,7 +135,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
             updateColour(100);
         }
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void CheckForResult(bool userTriggered, double timeOffset, Action<Action<JudgementResult>> onAction)
         {
             if (userTriggered)
                 return;
@@ -187,7 +187,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
             {
             }
 
-            protected override void CheckForResult(bool userTriggered, double timeOffset)
+            protected override void CheckForResult(bool userTriggered, double timeOffset, Action<Action<JudgementResult>> onAction)
             {
                 if (!ParentHitObject.Judged)
                     return;

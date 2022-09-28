@@ -74,6 +74,14 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
                                 UpdateResult(true);
                                 return true;
                             },
+                            UnscoredHit = () =>
+                            {
+                                if (AllResultsDisplayed)
+                                    return false;
+
+                                UpdateUnscoredResult(true);
+                                return true;
+                            },
                         },
                         shakeContainer = new ShakeContainer
                         {
@@ -139,16 +147,16 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             Position = HitObject.StackedPosition;
         }
 
-        public override void Shake() => shakeContainer.Shake();
+        //public override void Shake() => shakeContainer.Shake();
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void CheckForResult(bool userTriggered, double timeOffset, Action<Action<JudgementResult>> onAction)
         {
             Debug.Assert(HitObject.HitWindows != null);
 
             if (!userTriggered)
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                    ApplyResult(r => r.Type = r.Judgement.MinResult);
+                    onAction?.Invoke(r => r.Type = r.Judgement.MinResult);
 
                 return;
             }
@@ -157,11 +165,11 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
 
             if (result == HitResult.None || CheckHittable?.Invoke(this, Time.Current) == false)
             {
-                Shake();
+                //Shake();
                 return;
             }
 
-            ApplyResult(r =>
+            onAction?.Invoke(r =>
             {
                 var circleResult = (OsuHitCircleJudgementResult)r;
 
@@ -237,6 +245,7 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             public override bool HandlePositionalInput => true;
 
             public Func<bool> Hit;
+            public Func<bool> UnscoredHit;
 
             public OsuAction? HitAction;
 
@@ -258,6 +267,16 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
                     case OsuAction.LeftButton:
                     case OsuAction.RightButton:
                         if (IsHovered && (Hit?.Invoke() ?? false))
+                        {
+                            HitAction = e.Action;
+                            return true;
+                        }
+
+                        break;
+
+                    case OsuAction.UnscoredLeftButton:
+                    case OsuAction.UnscoredRightButton:
+                        if (IsHovered && (UnscoredHit?.Invoke() ?? false))
                         {
                             HitAction = e.Action;
                             return true;

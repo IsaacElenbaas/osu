@@ -12,6 +12,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Audio;
 using osu.Game.Graphics.Containers;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Osu.Skinning.Default;
@@ -254,7 +255,7 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             SliderBody?.RecyclePath();
         }
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void CheckForResult(bool userTriggered, double timeOffset, Action<Action<JudgementResult>> onAction)
         {
             if (userTriggered || Time.Current < HitObject.EndTime)
                 return;
@@ -263,12 +264,12 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             // But the slider needs to still be judged with a reasonable hit/miss result for visual purposes (hit/miss transforms, etc).
             if (HitObject.OnlyJudgeNestedObjects)
             {
-                ApplyResult(r => r.Type = NestedHitObjects.Any(h => h.Result.IsHit) ? r.Judgement.MaxResult : r.Judgement.MinResult);
+                onAction?.Invoke(r => r.Type = NestedHitObjects.Any(h => h.Result.IsHit) ? r.Judgement.MaxResult : r.Judgement.MinResult);
                 return;
             }
 
             // Otherwise, if this slider also needs to be judged, apply judgement proportionally to the number of nested hitobjects hit. This is the classic osu!stable scoring.
-            ApplyResult(r =>
+            onAction?.Invoke(r =>
             {
                 int totalTicks = NestedHitObjects.Count;
                 int hitTicks = NestedHitObjects.Count(h => h.IsHit);

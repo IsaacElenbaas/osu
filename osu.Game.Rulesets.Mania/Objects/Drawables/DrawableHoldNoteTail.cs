@@ -3,9 +3,11 @@
 
 #nullable disable
 
+using System;
 using System.Diagnostics;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Mania.Objects.Drawables
@@ -42,7 +44,7 @@ namespace osu.Game.Rulesets.Mania.Objects.Drawables
 
         public override double MaximumJudgementOffset => base.MaximumJudgementOffset * release_window_lenience;
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void CheckForResult(bool userTriggered, double timeOffset, Action<Action<JudgementResult>> onAction)
         {
             Debug.Assert(HitObject.HitWindows != null);
 
